@@ -7,6 +7,15 @@ import { z } from 'zod';
 import { signIn } from '@/page/auth';
 import { AuthError } from 'next-auth';
 
+export type State = {
+  errors?: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+  };
+  message?: string | null;
+};
+
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function authenticate(
@@ -40,7 +49,7 @@ const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 
-export async function createInvoice(prevState: any, formData: FormData) {
+export async function createInvoice(prevState: State, formData: FormData) {
   const { customerId, amount, status } = CreateInvoice.parse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
